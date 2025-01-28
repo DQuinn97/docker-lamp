@@ -1,0 +1,16 @@
+{
+  "name": "some_name",
+  "version": "1.0.0",
+  "description": "",
+  "main": "vite.config.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "vite --open --host",
+    "build": "vite build",
+    "build:php": "vite build --config vite.config-with-php.js",
+    "preview": "vite preview --open --host",
+    "preview:php": "php -S localhost:8080"
+  },
+  "author": "David Verhulst",
+  "license": "ISC"
+}
