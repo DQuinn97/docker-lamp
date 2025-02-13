@@ -3,37 +3,27 @@ require('db.inc.php');
 
 $errors = [];
 $target_dir = "uploads/";
-$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-$uploadOk = 1;
-$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
 if (isset($_POST['formSubmit'])) {
+    $basename = basename($_FILES["imgupload"]["name"]);
 
-    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-    if ($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
-        $uploadOk = 1;
-    } else {
+    $imageFileType = strtolower(pathinfo($basename, PATHINFO_EXTENSION));
+    print_r($imageFileType);
+
+    $check = getimagesize($_FILES["imgupload"]["tmp_name"]);
+    if ($check === false) {
         $errors[] = "File is not an image.";
-        $uploadOk = 0;
+    }
+    if ($_FILES["imgupload"]["size"] > 1000000) {
+        $errors[] = "File is too large.";
     }
 
     if (!count($errors)) {
-
-
-        // // haal og title, descrr,.... op via api
-        // $ogData = getOgViaApi($inputUrl);
-
-        // $ogtitle = @$ogData->hybridGraph->title ?? '';
-        // $ogdescription = @$ogData->hybridGraph->description ?? '';
-        // $ogimage = @$ogData->hybridGraph->image ?? '';;
-
-        // // insert into db
-        // $id = insertOgLink($inputUrl, $ogtitle, $ogdescription, $ogimage);
-
-        // if (!$id) {
-        //     $errors[] = "Something unexplainable happened...";
-        // }
+        $randomFileNameLength = 16;
+        $randomFileName = $target_dir . bin2hex(random_bytes($randomFileNameLength / 2)) . "." . $imageFileType;
+        if (!move_uploaded_file($_FILES["imgupload"]["tmp_name"], $randomFileName)) {
+            $errors[] = "Something went wrong with the file upload...";
+        }
     }
 }
 $items = getDbImages();
